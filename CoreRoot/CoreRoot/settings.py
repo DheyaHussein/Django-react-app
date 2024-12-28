@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #internl 
+    'rest_framework',
     'core',
-    'core.user'
+    # 'core.user'
     #exter
 ]
 
@@ -102,7 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-AUTH_USER_MODEL = 'core_user.User'
+AUTH_USER_MODEL = 'core.User'
 
 
 # Internationalization
