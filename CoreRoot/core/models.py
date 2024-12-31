@@ -14,10 +14,10 @@ from django.http import Http404
 class UserManager(BaseUserManager):
     def get_object_by_public_id(self, pulic_id):
         try:
-            instance = self.get(pulic_id=pulic_id)
+            instance = self.get(public_id=pulic_id)
             return instance
         except(ObjectDoesNotExist, ValueError, TypeError):
-            return Http404
+            return Http404  
         
     def create_user(self, username, email, password=None, **kwargs):
         """
@@ -59,11 +59,6 @@ class UserManager(BaseUserManager):
         
             
             
-            
-            
-
-
-
 class User(AbstractBaseUser, PermissionsMixin):
     public_id = models.UUIDField(db_index=True, unique=True, 
                                  default=uuid.uuid4, editable=False)
@@ -90,6 +85,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     def name(self):
         return f"{self.first_name} {self.last_name}"
     
+    @property
+    def is_staff(self):
+        """Make the is_staff property proxy the is_superuser field."""
+        return self.is_superuser
+
+    def has_perm(self, perm, obj=None):
+        """Allow permissions based on is_superuser."""
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+        """Allow module permissions based on is_superuser."""
+        return self.is_superuser
     
         
 

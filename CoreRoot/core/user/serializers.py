@@ -18,12 +18,11 @@ class UserSerializer(serializers.ModelSerializer):
             "name",
             "first_name",
             "last_name",
-            "bio",
-            "avatar",
+            # "avatar",
             "email",
             "is_active",
             "created",
             "updated",
-            "posts_count",
+            # "posts_count",
         ]
         read_only_field = ['is_active']        

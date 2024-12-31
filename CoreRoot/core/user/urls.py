@@ -2,6 +2,7 @@ from django.urls import URLPattern, path
 from core.user.views import UserViewSet
 
 urlpatterns = [
-    path('', UserViewSet.as_view({'get': 'list'})),
+    path('user/', UserViewSet.as_view({'get': 'list', 'patch': 'update'})),
+    
 ]
 
