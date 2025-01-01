@@ -1,4 +1,6 @@
-from django.db import models
+from pyexpat import model
+from xmlrpc.client import boolean
+
 
 # Create your models here.
 from tkinter import N
@@ -11,6 +13,28 @@ from django.http import Http404
 # Create your models here.
 
 
+#  AbstractS
+class AbstractManager(models.Manager):
+    def get_object_by_public_id(self, public_id):
+        try:
+            instance = self.get(public_id=public_id)
+            return instance
+        except (ObjectDoesNotExist, ValueError, TypeError):
+            return Http404
+    
+
+
+class AbstractModel(models.Model):
+    public_id = models.UUIDField(db_index=True, unique=True,
+    default=uuid.uuid4, editable=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    
+    class Meta:
+        abstract = True
+        
+        
 class UserManager(BaseUserManager):
     def get_object_by_public_id(self, pulic_id):
         try:
@@ -98,8 +122,28 @@ class User(AbstractBaseUser, PermissionsMixin):
         """Allow module permissions based on is_superuser."""
         return self.is_superuser
     
-        
+   
+   
+class PostManager(AbstractManager):
+    pass     
 
 
+class Post(AbstractModel):
+    # public_id
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField()
+    edited = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now=True)
+    updated = models.DateTimeField(auto_now_add=True)
+    
+    objects = PostManager()
+    def __str__(self):
+        return f"{self.author.name}"
+    
+    class Meta:
+        db_table = 'Post'
+    
+    
 
     
