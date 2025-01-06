@@ -1,4 +1,5 @@
 from pyexpat import model
+import re
 from xmlrpc.client import boolean
 
 
@@ -90,6 +91,10 @@ class User(AbstractBaseUser, PermissionsMixin):
                                  max_length=255, unique=True)
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
+    # avatar = models.ImageField(null=True)
+    bio = models.TextField(null=True)
+    posts_liked = models.ManyToManyField('Post', related_name='liked_by')
+
     email = models.EmailField(db_index=True, unique=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
@@ -122,6 +127,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         """Allow module permissions based on is_superuser."""
         return self.is_superuser
     
+    def like_post(self, post):
+        """Like a post if it is not already liked."""
+
+        return self.posts_liked.add(post)
+    
+    def unlike_post(self, post):
+        """Unlike a post if it is already liked."""
+
+        return self.posts_liked.remove(post)
+    
+    def has_liked_post(self, post):
+        """Check if a post is liked by the user."""
+
+        return self.posts_liked.filter(pk=post.pk).exists()
+    
    
    
 class PostManager(AbstractManager):
@@ -143,6 +163,26 @@ class Post(AbstractModel):
     
     class Meta:
         db_table = 'Post'
+        
+        
+class CommentManager(AbstractManager):
+    pass
+
+
+class Comment(AbstractModel):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    body = models.TextField()
+    edited = models.BooleanField(default=False)
+    
+    objects = CommentManager()
+    
+    def __str__(self):
+        return f"{self.author.name}"
+    
+    class Meta:
+        db_table = 'Comment'
+
     
     
 
