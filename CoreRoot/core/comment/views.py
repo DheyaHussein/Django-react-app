@@ -1,14 +1,14 @@
 import re
 from django.shortcuts import render
 
-from CoreRoot.core import post
+# from CoreRoot.core import post
 from core.auth.permissions import UserPermission
 from core.models import Comment
 from core.comment.serializers import CommentSerializer
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import Http404
+from rest_framework.status import HTTP_404_NOT_FOUND
 from rest_framework import status
 
 
@@ -16,7 +16,7 @@ from rest_framework import status
 
 class CommentViewSet(viewsets.ModelViewSet):
     http_method_names = ('post', 'get', 'put', 'delete')
-    permission_classes = (UserPermission,)
+    # permission_classes = (UserPermission,)
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     
@@ -27,14 +27,15 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Comment.objects.all()
         post_id = self.kwargs['post_id']
         if post_id is None:
-            raise Http404
+            raise HTTP_404_NOT_FOUND
         queryset = Comment.objects.filter(post__public_id=post_id)
         return queryset
     def get_object(self):
         try:
             obj = Comment.objects.get_object_by_public_id(self.kwargs['pk'])
+            
         except Comment.DoesNotExist:
-            raise Http404
+            raise HTTP_404_NOT_FOUND
         self.check_object_permissions(self.request, obj)
         return obj
     

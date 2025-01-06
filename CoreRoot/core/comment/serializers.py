@@ -2,7 +2,7 @@ from pyexpat import model
 import re
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from CoreRoot.core import auth
+# from CoreRoot.core import auth
 from core.models import Comment, Post, User
 from core.post.serializers import PostSerializer
 from core.user.serializers import UserSerializer
